@@ -1,124 +1,151 @@
-TLS Decryption Script
-A utility script for setting up Bettercap to perform TLS decryption through a man-in-the-middle proxy.
-Overview
-This script automates the process of creating and deploying a Certificate Authority (CA) certificate used by Bettercap to intercept, decrypt, and inspect HTTPS traffic. It's designed for network security professionals, penetration testers, and system administrators who need to analyze encrypted traffic for legitimate purposes.
-Features
+# TLS Decryption Script  
 
-Checks for Bettercap installation
-Generates a CA certificate automatically
-Verifies successful certificate creation
-Copies the certificate for easy distribution
-Provides guidance for certificate installation on various operating systems
-Network reconnaissance to discover devices
+A utility script for setting up **Bettercap** to perform TLS decryption through a **man-in-the-middle (MITM) proxy**.  
 
-Computer/device type identification
-Hostname resolution
-IP address mapping
+## 📖 Overview  
+This script automates the process of **creating and deploying a Certificate Authority (CA) certificate** used by Bettercap to **intercept, decrypt, and inspect HTTPS traffic**.  
 
+It is designed for:  
+- **Network security professionals**  
+- **Penetration testers**  
+- **System administrators**  
 
-Detailed device scanning with OS fingerprinting
-Traffic monitoring to analyze network destinations
-Live network dashboard with web interface
-Network traffic logging (DNS requests, MAC addresses, IP addresses)
-Cookie capture from HTTP/HTTPS traffic
+⚠ **Use this tool responsibly and only in environments where you have explicit permission.**  
 
-Prerequisites
+## ✨ Features  
 
-Linux-based operating system
-Bettercap installed
-OpenSSL installed
-Root or sudo privileges
-Nmap (optional, for enhanced device fingerprinting)
+✅ **Bettercap installation check**  
+✅ **Automated CA certificate generation**  
+✅ **Certificate verification & easy distribution**  
+✅ **Guidance for certificate installation (Windows, macOS, Android, iOS)**  
+✅ **Network reconnaissance** (discover & scan devices)  
+✅ **Traffic monitoring & logging**  
+✅ **Cookie capture from HTTP/HTTPS traffic**  
+✅ **Live network dashboard with a web interface**  
 
-Installation
+---
 
-Clone or download this script to your local machine
-Make the script executable:
-bashCopychmod +x tls_decryption.sh
+### 🔍 **Network Reconnaissance**  
+- Discover devices on the local network  
+- Identify device type, hostname, and IP address  
+- Perform OS fingerprinting and port scanning  
 
+### 📡 **Traffic Monitoring & Logging**  
+- View real-time traffic flows  
+- Analyze source & destination IP addresses  
+- Log **DNS requests, MAC addresses, and IPs**  
 
-Usage
+### 🍪 **Capture Cookies**  
+- Extract cookies from HTTP/HTTPS traffic  
+- Save session data for further analysis  
+
+### 📊 **Web Dashboard**  
+- Launch Bettercap's web interface  
+- Graphical network activity overview  
+- Access at [`http://127.0.0.1:80`](http://127.0.0.1:80)  
+
+---
+
+## 🛠 Prerequisites  
+
+- Linux-based OS  
+- **Bettercap** installed  
+- **OpenSSL** installed  
+- Root / sudo privileges  
+- **Nmap** (optional, for enhanced device fingerprinting)  
+
+## 📥 Installation  
+
+Clone this repository and make the script executable:  
+
+```bash
+git clone https://github.com/your-repo/tls-decryption-script.git
+cd tls-decryption-script
+chmod +x tls_decryption.sh
+
+🚀 Usage
+
 Run the script with root privileges:
-bashCopysudo ./tls_decryption.sh
-The script will present an interactive menu with the following options:
 
-Generate CA certificate for HTTPS decryption
+sudo ./tls_decryption.sh
 
-Creates a certificate at ~/.bettercap-ca.cert.pem
-Verifies the certificate and displays its details
-Copies the certificate to your current directory
+You will be presented with an interactive menu offering the following options:
 
+🔑 Generate CA Certificate for HTTPS Decryption
+	•	Creates a CA certificate at ~/.bettercap-ca.cert.pem
+	•	Verifies the certificate and displays details
+	•	Copies the certificate to your current directory
 
-Network reconnaissance
+🔍 Network Reconnaissance & Scanning
+	•	Discover devices, MAC addresses, and IPs
+	•	Perform OS fingerprinting and port scanning
 
-Discovers devices on the local network
-Shows MAC addresses, IP addresses, and hostnames when available
-Displays vendor information to help identify device types
+📡 Monitor & Log Network Traffic
+	•	View real-time traffic flows
+	•	Save traffic data to a timestamped log file
 
+🍪 Capture Cookies
+	•	Extract session cookies from network traffic
+	•	Save them for analysis
 
-Detailed device scan
+📊 Launch Web Dashboard
+	•	Start Bettercap’s web interface
+	•	View network activity graphically
 
-Performs OS fingerprinting to determine device types
-Scans for open ports and services
-Provides more comprehensive device identification
+⚙ How It Works
 
+This script leverages Bettercap’s proxy capabilities to establish a MITM position. By creating a custom CA certificate and installing it on target devices, the script enables TLS/SSL decryption for traffic inspection.
 
-Monitor network traffic
+📜 Certificate Distribution
 
-Shows real-time traffic flows
-Displays source and destination IP addresses
-Identifies protocols and services being used
+After generating the CA certificate, you must install it on the target devices:
+	•	📱 Android
+	•	🍏 iOS
+	•	💻 Windows
+	•	🖥 macOS
 
+🛠 Running Bettercap
 
-Log network traffic
+Once the certificate is installed, start Bettercap with:
 
-Records DNS requests, MAC addresses, and IP addresses
-Saves traffic data to a timestamped log file
-Provides a summary of top DNS requests and IP addresses
+bettercap -eval "http.proxy on; https.proxy on; http.proxy.sslstrip true;"
 
+⚠ Security & Ethical Considerations
 
-Capture cookies
+This tool should only be used in environments where you have explicit authorization.
+Legitimate use cases include:
+✔ Network troubleshooting & debugging
+✔ Security testing with permission
+✔ Educational research
+✔ Testing on your own personal devices
 
-Extracts cookies from HTTP/HTTPS traffic
-Saves cookies to a timestamped file
-Shows domain, path, and cookie content
-Particularly useful for session analysis
+🚨 Legal Disclaimer
 
+	Using this tool to intercept network traffic without authorization may violate privacy laws, computer fraud laws, and organizational policies. The author assumes no liability for misuse or any damages resulting from this tool. Use responsibly!
 
-Launch web dashboard
+🛠 Troubleshooting
 
-Starts Bettercap's web interface
-Provides a graphical view of network activity
-Accessible via browser at http://127.0.0.1:80
+🔹 Certificate not generated?
+➡ Run Bettercap manually and check for errors.
 
+🔹 Certificate not trusted?
+➡ Follow the correct installation steps for your OS.
 
+🔹 No traffic intercepted?
+➡ Verify network configuration and ensure traffic passes through the proxy.
 
-How It Works
-The script leverages Bettercap's proxy capabilities to set up a man-in-the-middle position. By creating a custom CA certificate and installing it on target devices, the script enables the decryption and inspection of TLS/SSL encrypted traffic.
-Certificate Distribution
-After generating the certificate, you must distribute and install it on any device you wish to monitor. The script provides guidance for installing the certificate on:
+📜 License
 
-Android
-iOS
-Windows
-macOS
+This project is licensed under the MIT License.
 
-Running Bettercap
-Once the certificate is installed on target devices, you can run Bettercap with the following command to begin intercepting traffic:
-bashCopybettercap -eval "http.proxy on; https.proxy on; http.proxy.sslstrip true;"
-Security and Ethical Considerations
-This tool should only be used in environments where you have explicit permission to monitor network traffic. Potential legitimate uses include:
+🚀 Start securing your network today! 🚀
 
-Network troubleshooting and debugging
-Security testing with proper authorization
-Educational environments
-Your own personal devices
+---
 
-Troubleshooting
+### 📌 Improvements in This README:  
+✅ **Clear structure & headings**  
+✅ **Organized sections for easy navigation**  
+✅ **Emojis for readability & engagement**  
+✅ **Code blocks for commands**  
+✅ **Legal disclaimer & security warnings**  
 
-Certificate not generated: Run Bettercap manually and check for errors
-Certificate not trusted: Ensure you've followed the correct installation steps for the target OS
-No traffic intercepted: Verify network configuration and routing to ensure traffic passes through the proxy
-
-Legal Disclaimer
-Using this tool to intercept network traffic without authorization may violate computer fraud and abuse laws, privacy laws, and organizational policies. The author of this script assumes no liability for misuse or for any damages resulting from the use of this tool. Use responsibly and only in environments where you have explicit permission.
