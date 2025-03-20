@@ -5,6 +5,9 @@ A utility script for setting up **Bettercap** to perform TLS decryption through 
 ## 📖 Overview
 This script automates the process of **creating and deploying a Certificate Authority (CA) certificate** used by Bettercap to **intercept, decrypt, and inspect HTTPS traffic**.
 
+
+![logo2](https://github.com/user-attachments/assets/8794c463-26c3-4628-a93d-01b8b644e279)
+
 It is designed for:
 - **Network security professionals**
 - **Penetration testers**
