@@ -1,67 +1,42 @@
-# TLS Decryption Script
+# TLS Monitor Cert Tracker and certSniff Integration
 
-A utility script for setting up **Bettercap** to perform TLS decryption through a **man-in-the-middle (MITM) proxy**.
+The **TLS Monitor Cert Tracker** program works with **certSniff** to monitor and track domain certificate events. Here is an overview of how they integrate:
 
-## 📖 Overview
-This script automates the process of **creating and deploying a Certificate Authority (CA) certificate** used by Bettercap to **intercept, decrypt, and inspect HTTPS traffic**.
+## TLS Monitor Cert Tracker
 
+The main program is a utility script designed to set up **Bettercap** for TLS decryption through a **man-in-the-middle (MITM) proxy**. It automates the process of creating and deploying a Certificate Authority (CA) certificate used by Bettercap to intercept, decrypt, and inspect HTTPS traffic. The features include:
 
-![logo2](https://github.com/user-attachments/assets/8794c463-26c3-4628-a93d-01b8b644e279)
+- Bettercap installation check
+- Automated CA certificate generation
+- Certificate verification & easy distribution
+- Network reconnaissance
+- Traffic monitoring & logging
+- Cookie capture from HTTP/HTTPS traffic
+- Live network dashboard with a web interface
 
-It is designed for:
-- **Network security professionals**
-- **Penetration testers**
-- **System administrators**
+You can find more about this in the [README.md](./README.md).
 
-⚠ **Use this tool responsibly and only in environments where you have explicit permission.**
+## certSniff
 
-## ✨ Features
+**certSniff** is a Python-based keyword sniffer that uses the Certstream certificate transparency log data stream to monitor for domain certificate events containing specific keywords. It connects to a certificate transparency log stream and listens for new certificates. If the domains in these certificates contain specified keywords, it logs the matched domains.
 
-✅ **Bettercap installation check**
-✅ **Automated CA certificate generation**
-✅ **Certificate verification & easy distribution**
-✅ **Guidance for certificate installation (Windows, macOS, Android, iOS)**
-✅ **Network reconnaissance** (discover & scan devices)
-✅ **Traffic monitoring & logging**
-✅ **Cookie capture from HTTP/HTTPS traffic**
-✅ **Live network dashboard with a web interface**
+### Features
 
----
+- Real-time Monitoring
+- Keyword Matching
+- Logging matched domains to a file (`log.txt`)
+- Verbose Mode for detailed output
+- Colored Terminal Output for enhanced readability
 
-### 🔍 **Network Reconnaissance**
-- Discover devices on the local network
-- Identify device type, hostname, and IP address
-- Perform OS fingerprinting and port scanning
+Installation and usage instructions can be found in the [certSniff README.md](./certSniff/README.md).
 
-### 📡 **Traffic Monitoring & Logging**
-- View real-time traffic flows
-- Analyze source & destination IP addresses
-- Log **DNS requests, MAC addresses, and IPs**
+## Integration
 
-### 🍪 **Capture Cookies**
-- Extract cookies from HTTP/HTTPS traffic
-- Save session data for further analysis
+The integration between the **TLS Monitor Cert Tracker** and **certSniff** involves:
 
-### 📊 **Web Dashboard**
-- Launch Bettercap's web interface
-- Graphical network activity overview
-- Access at [`http://127.0.0.1:80`](http://127.0.0.1:80)
+- **Monitoring Certificate Events**: certSniff monitors real-time certificate transparency logs for domain certificates containing specified keywords.
+- **Logging and Alerting**: When a keyword match is found, certSniff logs the details, which can be utilized by the TLS Monitor Cert Tracker for further analysis or alerting.
 
----
+The integration allows for comprehensive monitoring and logging of certificate events, enhancing the capabilities of the TLS decryption and monitoring setup provided by the main program.
 
-## 🛠️ Prerequisites
-
-- Linux-based OS
-- **Bettercap** installed
-- **OpenSSL** installed
-- Root / sudo privileges
-- **Nmap** (optional, for enhanced device fingerprinting)
-
-## 📥 Installation
-
-Clone this repository and make the script executable:
-
-```bash
-git clone https://github.com/your-repo/tls-decryption-script.git
-cd tls-decryption-script
-chmod +x tls_decryption.sh
+For more detailed instructions on setting up and running certSniff, refer to the [certSniff documentation](./certSniff/README.md).
