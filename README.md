@@ -20,7 +20,7 @@ You can find more about this in the [README.md](./README.md).
 
 **certSniff** is a Python-based keyword sniffer that uses the Certstream certificate transparency log data stream to monitor for domain certificate events containing specific keywords. It connects to a certificate transparency log stream and listens for new certificates. If the domains in these certificates contain specified keywords, it logs the matched domains.
 
-![logo2](https://github.com/user-attachments/assets/a69009a4-1c56-436c-a7c7-83424e343d17)
+![image](https://github.com/user-attachments/assets/20315145-5630-4ba3-9b1c-7746f506ee17)
 
 ### Features
 
