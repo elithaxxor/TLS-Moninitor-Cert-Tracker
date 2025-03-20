@@ -10,7 +10,7 @@ This script automates the process of creating and deploying a Certificate Author
 
 ## Purpose
 The script is essentially creating a monitoring station on your computer. All the reconnaissance, scanning, and traffic analysis happens from your machine, analyzing the traffic it can see on the network. For ethical testing, this should be done only in environments where you have permission to monitor the network, such as your personal network, a lab environment, or a client network with proper authorization.
-![Uploading logo2.png…]()
+![logo2](https://github.com/user-attachments/assets/674209c3-fb87-47ce-a3a1-64322f9c3102)
 
 
 ![logo2](https://github.com/user-attachments/assets/0490f291-8ac4-4995-ab6d-0430445460f3)
@@ -63,6 +63,7 @@ Run the script with root privileges:
 ```bash
 sudo ./tls_decryption.sh
 ```
+![Uploading logo2.png…]()
 
 The script will present an interactive menu with the following options:
 1. **Generate CA certificate for HTTPS decryption**
@@ -125,4 +126,3 @@ Using this tool to intercept network traffic without authorization may violate c
 This script is provided "as is" without warranty of any kind. You are free to modify and distribute it according to your needs.
 ```
 
-You can view the original file [here](https://github.com/elithaxxor/TLS-Moninitor-Cert-Tracker/blob/main_pi/README2.md).
