@@ -1,38 +1,40 @@
-# TLS Monitor Cert Tracker and certSniff Integration
+# 🌐 TLS Monitor Cert Tracker and certSniff Integration
 
 The **TLS Monitor Cert Tracker** program works with **certSniff** to monitor and track domain certificate events. Here is an overview of how they integrate:
 
-## TLS Monitor Cert Tracker
+![TLS Monitor](https://github.com/user-attachments/assets/20315145-5630-4ba3-9b1c-7746f506ee17)
 
-The main program is a utility script designed to set up **Bettercap** for TLS decryption through a **man-in-the-middle (MITM) proxy**. It automates the process of creating and deploying a Certificate Authority (CA) certificate used by Bettercap to intercept, decrypt, and inspect HTTPS traffic. The features include:
+## 🔒 TLS Monitor Cert Tracker
 
-- Bettercap installation check
-- Automated CA certificate generation
-- Certificate verification & easy distribution
-- Network reconnaissance
-- Traffic monitoring & logging
-- Cookie capture from HTTP/HTTPS traffic
-- Live network dashboard with a web interface
+The main program is a utility script designed to set up **Bettercap** for TLS decryption through a **man-in-the-middle (MITM) proxy**. It automates the process of creating and deploying a Certificate Authority (CA) certificate used by Bettercap to intercept, decrypt, and inspect HTTPS traffic.
+
+### Key Features:
+- ✅ Bettercap installation check
+- ✅ Automated CA certificate generation
+- ✅ Certificate verification & easy distribution
+- ✅ Network reconnaissance
+- ✅ Traffic monitoring & logging
+- ✅ Cookie capture from HTTP/HTTPS traffic
+- ✅ Live network dashboard with a web interface
 
 You can find more about this in the [README.md](./README.md).
 
-## certSniff
+## 🕵️ certSniff
 
 **certSniff** is a Python-based keyword sniffer that uses the Certstream certificate transparency log data stream to monitor for domain certificate events containing specific keywords. It connects to a certificate transparency log stream and listens for new certificates. If the domains in these certificates contain specified keywords, it logs the matched domains.
 
-![image](https://github.com/user-attachments/assets/20315145-5630-4ba3-9b1c-7746f506ee17)
+![certSniff](https://github.com/user-attachments/assets/8f71bab2-2f1a-4748-b293-c396f69f9be6)
 
 ### Features
-
-- Real-time Monitoring
-- Keyword Matching
-- Logging matched domains to a file (`log.txt`)
-- Verbose Mode for detailed output
-- Colored Terminal Output for enhanced readability
+- 🔍 Real-time Monitoring
+- 📝 Keyword Matching
+- 📁 Logging matched domains to a file (`log.txt`)
+- 🗣️ Verbose Mode for detailed output
+- 🌈 Colored Terminal Output for enhanced readability
 
 Installation and usage instructions can be found in the [certSniff README.md](./certSniff/README.md).
 
-## Integration
+## 🔗 Integration
 
 The integration between the **TLS Monitor Cert Tracker** and **certSniff** involves:
 
