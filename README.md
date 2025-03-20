@@ -13,7 +13,6 @@ The script is essentially creating a monitoring station on your computer. All th
 ![logo2](https://github.com/user-attachments/assets/674209c3-fb87-47ce-a3a1-64322f9c3102)
 
 
-![logo2](https://github.com/user-attachments/assets/0490f291-8ac4-4995-ab6d-0430445460f3)
 
 Run on your computer - You'll need:
 - Linux-based system (works best on Kali, Ubuntu, Debian, etc.)
