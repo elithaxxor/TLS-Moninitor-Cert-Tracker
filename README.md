@@ -1,5 +1,5 @@
 
-```markdown
+
 # TLS Decryption Script
 
 A utility script for setting up Bettercap to perform TLS decryption through a man-in-the-middle proxy.
