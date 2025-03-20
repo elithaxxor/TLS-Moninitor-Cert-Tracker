@@ -1,4 +1,3 @@
-Here is the reformatted content for the `README2.md` file in GitHub Markdown language:
 
 ```markdown
 # TLS Decryption Script
