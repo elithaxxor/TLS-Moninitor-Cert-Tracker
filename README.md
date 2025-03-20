@@ -10,6 +10,7 @@ This script automates the process of creating and deploying a Certificate Author
 
 ## Purpose
 The script is essentially creating a monitoring station on your computer. All the reconnaissance, scanning, and traffic analysis happens from your machine, analyzing the traffic it can see on the network. For ethical testing, this should be done only in environments where you have permission to monitor the network, such as your personal network, a lab environment, or a client network with proper authorization.
+![Uploading logo2.png…]()
 
 
 ![logo2](https://github.com/user-attachments/assets/0490f291-8ac4-4995-ab6d-0430445460f3)
