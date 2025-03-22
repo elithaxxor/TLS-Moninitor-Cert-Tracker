@@ -8,7 +8,7 @@
 The file `eyeDNSu` is a Python script that implements a fake DNS server. Here is a detailed explanation of its functionality:
 
 --> Responds to DNS requests over both UDP and TCP
---> Asynchronous Handling
+--> Asynchronous Handling / or Threaded. Two distinct files are posted. 
 --> Simultaneously manages multiple DNS requests without blocking or Custom Logging
 --> Logs client IPs, queried domains, responses, and frequencies
 --> Verbose Output
