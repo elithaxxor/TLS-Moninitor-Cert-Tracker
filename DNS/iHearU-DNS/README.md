@@ -1,4 +1,7 @@
 ```markdown
+
+<img width="422" alt="Screenshot 2025-03-21 at 10 15 37 PM" src="https://github.com/user-attachments/assets/070bee21-7ff3-4349-ba70-45c68687b09d" />
+
 # Explanation of the `eyeDNSu` File
 
 The file `eyeDNSu` is a Python script that implements a fake DNS server. Here is a detailed explanation of its functionality:
