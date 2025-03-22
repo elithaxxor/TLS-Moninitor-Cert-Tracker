@@ -2,11 +2,27 @@
 
 <img width="422" alt="Screenshot 2025-03-21 at 10 15 37 PM" src="https://github.com/user-attachments/assets/070bee21-7ff3-4349-ba70-45c68687b09d" />
 
-# Explanation of the `eyeDNSu` File
+
+## [Overiew]
 
 The file `eyeDNSu` is a Python script that implements a fake DNS server. Here is a detailed explanation of its functionality:
-```
 
+Responds to DNS requests over both UDP and TCP
+Asynchronous Handling
+Simultaneously manages multiple DNS requests without blocking
+Custom Logging
+Logs client IPs, queried domains, responses, and frequencies
+Verbose Output
+Clear colored console output for easy debugging and monitoring
+Log File Management
+Deletes logs automatically once reaching 5 GB size
+
+
+🎯 Why is Async Better Here? (Bottom Line)
+	•	DNS serving is an I/O-bound operation—network I/O dominates the workload.
+	•	Async (asyncio) excels precisely at I/O-bound workloads, managing thousands of connections with minimal overhead.
+	•	Low overhead and high scalability are crucial for DNS servers, making asyncio preferable over multi-threading or multi-processing.
+```
 ![Memory Overhead](https://github.com/user-attachments/assets/a4582ed7-0d14-44e6-bb79-16832fe31252)
 
 ```markdown
