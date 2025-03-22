@@ -5,7 +5,11 @@
 # Explanation of the `eyeDNSu` File
 
 The file `eyeDNSu` is a Python script that implements a fake DNS server. Here is a detailed explanation of its functionality:
+```
 
+![Memory Overhead](https://github.com/user-attachments/assets/a4582ed7-0d14-44e6-bb79-16832fe31252)
+
+```markdown
 ## Logging Configuration:
 - The script sets up logging for both UDP and TCP DNS queries. It logs client IP addresses, the DNS queries made, the responses sent, and the frequency of each query.
 
