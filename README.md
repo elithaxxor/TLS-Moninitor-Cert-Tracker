@@ -2,7 +2,6 @@
 
 The **TLS Monitor Cert Tracker** program works with **certSniff** to monitor and track domain certificate events. Here is an overview of how they integrate:
 
-![TLS Monitor](https://github.com/user-attachments/assets/20315145-5630-4ba3-9b1c-7746f506ee17)
 
 ## 🔒 TLS Monitor Cert Tracker
 
