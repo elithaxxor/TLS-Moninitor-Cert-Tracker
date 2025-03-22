@@ -7,15 +7,14 @@
 
 The file `eyeDNSu` is a Python script that implements a fake DNS server. Here is a detailed explanation of its functionality:
 
-Responds to DNS requests over both UDP and TCP
-Asynchronous Handling
-Simultaneously manages multiple DNS requests without blocking
-Custom Logging
-Logs client IPs, queried domains, responses, and frequencies
-Verbose Output
-Clear colored console output for easy debugging and monitoring
-Log File Management
-Deletes logs automatically once reaching 5 GB size
+--> Responds to DNS requests over both UDP and TCP
+--> Asynchronous Handling
+--> Simultaneously manages multiple DNS requests without blocking or Custom Logging
+--> Logs client IPs, queried domains, responses, and frequencies
+--> Verbose Output
+--> Clear colored console output for easy debugging and monitoring
+--> Log File Management
+--> Deletes logs automatically once reaching 5 GB size
 
 
 🎯 Why is Async Better Here? (Bottom Line)
