@@ -5,6 +5,10 @@
 
 ## [Overiew]
 
+### -->  I recommend running eyeDNSasync_III in debug mode. otherwise it will run silent.
+
+--> It uses asynchronous I/O (via asyncio) for UDP and TCP servers, supports multiple record types (A, AAAA, MX, etc.) from a dynamic JSON config, caches responses with TTL, and includes enhanced security and logging. We also add an interactive menu that lets the operator choose whether to log queries, reroute them to a fixed IP, or do both.
+
 The file `eyeDNSu` is a Python script that implements a fake DNS server. Here is a detailed explanation of its functionality:
 
 --> Responds to DNS requests over both UDP and TCP
