@@ -1,0 +1,16 @@
+{
+  "google.com.": "10.0.0.1",
+  "youtube.com.": "10.0.0.1",
+  "facebook.com.": "10.0.0.1",
+  "twitter.com.": "10.0.0.1",
+  "instagram.com.": "10.0.0.1",
+  "baidu.com.": "10.0.0.1",
+  "wikipedia.org.": "10.0.0.1",
+  "reddit.com.": "10.0.0.1",
+  "yahoo.com.": "10.0.0.1",
+  "amazon.com.": "10.0.0.1",
+  "pornhub.com": "10.0.0.1",
+  "xhamster.com": "10.0.0.1",
+  "xvideos.com": "10.0.0.1",
+  // ... add the remaining whatever websites  here ...
+}
