@@ -8,12 +8,19 @@ It:
   - Supports multiple record types (A, AAAA, MX, etc.).
   - Caches DNS responses (with TTL) for better performance.
   - Implements enhanced security via basic query validation.
-  - Provides robust logging (with file and optional console logging).
+  - Provides robust logging (to file and optionally to console).
   - Offers an interactive menu for choosing between logging, rerouting, or both.
-  
+  - Collects query data in memory for visualization.
+
+Visualization Options (eyeDNSu):
+  - Pie Chart: View distribution of DNS queries by domain.
+  - Line Graph: Observe DNS query trends over time.
+  - Heat Map: Identify peak usage times and visualize anomalies.
+
 Usage:
-  python fake_dns.py [--debug] 
-    (optionally, type "test" to run unit tests)
+  python fake_dns.py [--debug]
+  python fake_dns.py visualize   # to run visualization mode
+  python fake_dns.py test        # to run unit tests
 """
 
 import asyncio
@@ -23,9 +30,14 @@ import json
 import fnmatch
 import time
 import socket
-from collections import defaultdict
+from collections import defaultdict, Counter
+from datetime import datetime
 from dnslib import DNSRecord, QTYPE, RR, A, AAAA, MX
 from functools import partial
+
+# For visualization (matplotlib)
+import matplotlib.pyplot as plt
+import numpy as np
 
 # ================================
 # CONFIGURATION & LOGGING SETUP
@@ -137,15 +149,18 @@ class DNSCache:
 dns_cache = DNSCache()
 
 # ================================
-# QUERY LOGGING
+# QUERY LOGGING & DATA COLLECTION
 # ================================
 
 # Track query frequencies per client and query
 udp_query_tracker = defaultdict(int)
 tcp_query_tracker = defaultdict(int)
 
+# Collect query records for visualization: list of (timestamp, domain, protocol)
+query_records = []
+
 def log_query(logger, query_tracker, client_ip, query, response):
-    """Log query details and update frequency counter."""
+    """Log query details, update frequency counter, and store record for visualization."""
     query_tracker[(client_ip, query)] += 1
     log_data = {
         "client_ip": client_ip,
@@ -154,6 +169,8 @@ def log_query(logger, query_tracker, client_ip, query, response):
         "frequency": query_tracker[(client_ip, query)]
     }
     logger.info("Query received", extra=log_data)
+    # Append record with current time for visualization
+    query_records.append((time.time(), query, logger.name.split('_')[0].upper()))
 
 # ================================
 # DNS QUERY HANDLER & RESPONSE GENERATOR
@@ -191,11 +208,10 @@ def resolve_ip(qname, qtype):
 def build_dns_response(request):
     """
     Build a DNS response for a given DNS request.
-    Checks the query type and uses caching.
+    Checks the query type, uses caching, and returns a DNSRecord.
     """
     # Validate minimal length of request to prevent abuse
     if len(request.pack()) > 512:
-        # In real servers, larger packets are handled via TCP; here we ignore.
         return None
 
     qname = str(request.q.qname)
@@ -204,7 +220,6 @@ def build_dns_response(request):
     # Only support a subset of record types. Extend as needed.
     supported_types = {"A", "AAAA", "MX"}
     if qtype_str not in supported_types:
-        # For unsupported types, return an empty answer.
         return DNSRecord(header=request.header, q=request.q)
 
     cache_key = (qname, qtype_str)
@@ -212,29 +227,24 @@ def build_dns_response(request):
     if cached_response:
         return DNSRecord.parse(cached_response)
 
-    # Determine response based on action mode: if reroute, use fixed REROUTE_IP for A/AAAA;
-    # for other types or log-only mode, perform normal lookup.
+    # Determine response based on action mode:
     if ACTION_MODE in ("reroute", "both"):
         record_value = REROUTE_IP
         ttl = DEFAULT_TTL
     else:
         record_value, ttl = resolve_ip(qname, qtype_str)
         if record_value is None:
-            # No mapping found; return response with no answer.
             return DNSRecord(header=request.header, q=request.q)
 
     reply = DNSRecord(header=request.header, q=request.q)
 
-    # Build answer based on record type
     if qtype_str == "A":
         reply.add_answer(RR(qname, QTYPE.A, rdata=A(record_value), ttl=ttl))
     elif qtype_str == "AAAA":
         reply.add_answer(RR(qname, QTYPE.AAAA, rdata=AAAA(record_value), ttl=ttl))
     elif qtype_str == "MX":
-        # For MX, record_value should be the domain name of the mail server.
         reply.add_answer(RR(qname, QTYPE.MX, rdata=MX(record_value), ttl=ttl))
 
-    # Cache the response
     dns_cache.set(cache_key, reply.pack(), ttl)
     return reply
 
@@ -255,13 +265,11 @@ async def process_dns_query(data, client_ip, protocol):
     qname = str(request.q.qname)
     qtype_str = QTYPE[request.q.qtype]
 
-    # If unsupported query type, skip processing.
     supported_types = {"A", "AAAA", "MX"}
     if qtype_str not in supported_types:
         print(f"Unsupported query type {qtype_str} from {client_ip} for {qname}")
         return None
 
-    # In log or both modes, log the query.
     if ACTION_MODE in ("log", "both"):
         if protocol == "UDP":
             log_query(udp_logger, udp_query_tracker, client_ip, qname, "response prepared")
@@ -278,25 +286,19 @@ async def process_dns_query(data, client_ip, protocol):
 class DNSUDPProtocol(asyncio.DatagramProtocol):
     """Asyncio DatagramProtocol to handle UDP DNS requests."""
     def datagram_received(self, data, addr):
-        client_ip, client_port = addr
+        client_ip, _ = addr
         asyncio.create_task(self.handle_request(data, addr))
 
     async def handle_request(self, data, addr):
         client_ip, _ = addr
         reply = await process_dns_query(data, client_ip, "UDP")
         if reply:
-            loop = asyncio.get_running_loop()
-            transport = self.transport
-            try:
-                transport.sendto(reply.pack(), addr)
-            except Exception as e:
-                udp_logger.error(f"Error sending UDP response to {client_ip}: {e}")
+            self.transport.sendto(reply.pack(), addr)
 
 async def handle_tcp_client(reader, writer):
     """Asynchronous TCP client handler for DNS queries."""
     client_ip = writer.get_extra_info('peername')[0]
     try:
-        # Read the two-byte length prefix
         length_bytes = await reader.readexactly(2)
         length = int.from_bytes(length_bytes, 'big')
         data = await reader.readexactly(length)
@@ -309,31 +311,94 @@ async def handle_tcp_client(reader, writer):
     reply = await process_dns_query(data, client_ip, "TCP")
     if reply:
         response_data = reply.pack()
-        try:
-            writer.write(len(response_data).to_bytes(2, 'big') + response_data)
-            await writer.drain()
-        except Exception as e:
-            tcp_logger.error(f"Error sending TCP response to {client_ip}: {e}")
+        writer.write(len(response_data).to_bytes(2, 'big') + response_data)
+        await writer.drain()
     writer.close()
     await writer.wait_closed()
 
 async def start_servers(port):
     """Start both UDP and TCP DNS servers using asyncio."""
     loop = asyncio.get_running_loop()
-
-    # Start UDP server
     print(f"Starting UDP DNS server on port {port}")
-    udp_transport, _ = await loop.create_datagram_endpoint(
-        DNSUDPProtocol,
-        local_addr=("", port)
-    )
-
-    # Start TCP server
+    udp_transport, _ = await loop.create_datagram_endpoint(DNSUDPProtocol, local_addr=("", port))
     print(f"Starting TCP DNS server on port {port}")
     tcp_server = await asyncio.start_server(handle_tcp_client, host="", port=port)
-
     async with tcp_server:
         await tcp_server.serve_forever()
+
+# ================================
+# VISUALIZATION FUNCTIONS
+# ================================
+
+def visualize_pie():
+    """Generate a pie chart showing the distribution of DNS queries by domain."""
+    # Count occurrences of each domain
+    domains = [record[1] for record in query_records]
+    counter = Counter(domains)
+    labels = list(counter.keys())
+    sizes = list(counter.values())
+
+    plt.figure()
+    plt.pie(sizes, labels=labels, autopct="%1.1f%%", startangle=140)
+    plt.title("DNS Query Distribution by Domain")
+    plt.axis("equal")
+    plt.show()
+
+def visualize_line():
+    """Generate a line graph showing DNS query trends over time."""
+    # Group queries by minute
+    times = [datetime.fromtimestamp(record[0]).strftime("%H:%M") for record in query_records]
+    counter = Counter(times)
+    sorted_times = sorted(counter.keys())
+    counts = [counter[tm] for tm in sorted_times]
+
+    plt.figure()
+    plt.plot(sorted_times, counts, marker='o')
+    plt.xticks(rotation=45)
+    plt.title("DNS Query Trends Over Time (per minute)")
+    plt.xlabel("Time (HH:MM)")
+    plt.ylabel("Query Count")
+    plt.tight_layout()
+    plt.show()
+
+def visualize_heat():
+    """Generate a heat map of DNS query counts per hour of day."""
+    # Aggregate queries by hour (0-23)
+    hours = [datetime.fromtimestamp(record[0]).hour for record in query_records]
+    counter = Counter(hours)
+    heat = np.zeros(24)
+    for hr in range(24):
+        heat[hr] = counter.get(hr, 0)
+    
+    plt.figure()
+    plt.imshow(heat.reshape(1, -1), cmap="hot", aspect="auto")
+    plt.colorbar(label="Query Count")
+    plt.yticks([])  # Hide y-axis labels since it's a single row
+    plt.xticks(np.arange(24), np.arange(24))
+    plt.title("DNS Query Heat Map (by Hour of Day)")
+    plt.xlabel("Hour of Day")
+    plt.show()
+
+def visualization_menu():
+    """Display a menu to choose visualization options."""
+    print("Select a visualization option:")
+    print("1. Pie Chart - Distribution of DNS queries by domain")
+    print("2. Line Graph - DNS query trends over time")
+    print("3. Heat Map - Peak usage times (by hour)")
+    print("4. All of the above")
+    choice = input("Enter 1, 2, 3, or 4: ").strip()
+    if choice == "1":
+        visualize_pie()
+    elif choice == "2":
+        visualize_line()
+    elif choice == "3":
+        visualize_heat()
+    elif choice == "4":
+        visualize_pie()
+        visualize_line()
+        visualize_heat()
+    else:
+        print("Invalid choice.")
 
 # ================================
 # UNIT TESTS (for basic integration)
@@ -348,9 +413,8 @@ class TestFakeDNSServer(unittest.IsolatedAsyncioTestCase):
         ACTION_MODE = "log"  # Use normal mapping for tests
         cls.port = 5353
         cls.loop = asyncio.get_event_loop()
-        # Start servers in background
-        cls.udp_transport, cls.udp_protocol = cls.loop.run_until_complete(
-            asyncio.get_event_loop().create_datagram_endpoint(DNSUDPProtocol, local_addr=("", cls.port))
+        cls.udp_transport, _ = cls.loop.run_until_complete(
+            asyncio.get_running_loop().create_datagram_endpoint(DNSUDPProtocol, local_addr=("", cls.port))
         )
         cls.tcp_server = cls.loop.run_until_complete(asyncio.start_server(handle_tcp_client, host="", port=cls.port))
         time.sleep(1)
@@ -363,8 +427,6 @@ class TestFakeDNSServer(unittest.IsolatedAsyncioTestCase):
     async def test_udp_dns_query(self):
         qname = "example.com."
         request = DNSRecord.question(qname)
-        reader, writer = await asyncio.open_connection('127.0.0.1', self.port)
-        # For UDP, we use a socket
         sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         sock.settimeout(2)
         sock.sendto(request.pack(), ("127.0.0.1", self.port))
@@ -382,7 +444,6 @@ class TestFakeDNSServer(unittest.IsolatedAsyncioTestCase):
         reader, writer = await asyncio.open_connection('127.0.0.1', self.port)
         writer.write(prefixed_data)
         await writer.drain()
-        # Read the two-byte length prefix
         len_bytes = await reader.readexactly(2)
         resp_len = int.from_bytes(len_bytes, 'big')
         resp_data = await reader.readexactly(resp_len)
@@ -397,13 +458,15 @@ class TestFakeDNSServer(unittest.IsolatedAsyncioTestCase):
 # ================================
 
 if __name__ == "__main__":
+    # Check if visualization mode is requested
+    if "visualize" in sys.argv or "--viz" in sys.argv:
+        visualization_menu()
+        sys.exit(0)
     if "--debug" in sys.argv:
         add_stdout_logging()
     if "test" in sys.argv:
-        # Run unit tests
         unittest.main(argv=[sys.argv[0]])
     else:
-        # Interactive menu for action mode
         choose_action_mode()
         # Default port is 53; allow override by numeric command-line argument
         port = 53
